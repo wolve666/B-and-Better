@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1",
+  "version": "0.1.2",
   "native": 1,
-  "notes": "Nelle Impostazioni: carica dati di prova (10 case con prenotazioni) e cancella tutti i dati."
+  "notes": "Corretto il caricamento degli aggiornamenti: niente più tasti e schermate doppie."
 }
