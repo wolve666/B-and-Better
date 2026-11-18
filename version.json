@@ -1,5 +1,5 @@
 {
-  "version": "0.1.2",
+  "version": "0.2.0",
   "native": 1,
-  "notes": "Corretto il caricamento degli aggiornamenti: niente più tasti e schermate doppie."
+  "notes": "Nuovo aspetto chiaro: ingranaggio nell angolo, casette colorate, calendario arrotondato, barra in basso che segue il tasto +."
 }
