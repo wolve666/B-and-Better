@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<script>
+var APPV = '0.1.0', NATIVE = 1;
+var RAW = 'https://raw.githubusercontent.com/wolve666/b-and-better/main/';
+var APK_URL = 'https://github.com/wolve666/b-and-better/releases/latest/download/BandBetter.apk';
+function vcmp(a, b){ a = String(a).split('.').map(Number); b = String(b).split('.').map(Number);
+  for (var i = 0; i < 3; i++){ if ((a[i]||0) !== (b[i]||0)) return (a[i]||0) > (b[i]||0) ? 1 : -1 } return 0 }
+// avvio: se e' stata scaricata una pagina piu' recente di quella dentro l'APK, usa quella
+(function(){ try {
+  var v = localStorage.getItem('bb-htmlv'), h = localStorage.getItem('bb-html');
+  if (!window.__bbBoot && v && h && vcmp(v, APPV) > 0){ window.__bbBoot = 1; document.open(); document.write(h); document.close(); }
+} catch(e){} })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#071a3a">
+<title>B&amp;Better</title>
+<link rel="icon" href="icon.png">
+<style>
+:root{--bg:#071a3a;--bg2:#0c2450;--card:#11306a;--line:rgba(255,255,255,.09);--tx:#f4f1ea;--tx2:#a9b4cc;--tx3:#6f7ea0;--gold:#d9ae55;--gold2:#f0cf86;--red:#e5604f;--green:#4cbf8a;--hdr:58px;--nav:66px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;padding:0}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;outline:none;user-select:text;-webkit-user-select:text}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+input[type=date]{color-scheme:dark}
+svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#app{position:absolute;inset:0;display:flex;flex-direction:column;padding-top:var(--safe-t)}
+header{height:var(--hdr);display:flex;align-items:center;gap:10px;padding:0 10px 0 14px;flex:none}
+header img{width:34px;height:34px;border-radius:9px}
+.brand{font-size:19px;font-weight:600;letter-spacing:.2px}.brand b{color:var(--gold)}
+.ver{font-size:11px;color:var(--tx2);border:1px solid var(--line);border-radius:12px;padding:3px 8px;display:flex;align-items:center;gap:4px}
+.ver svg.i{width:13px;height:13px}.ver.new{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+.user{font-size:12px;color:var(--tx3);line-height:1}
+.ibtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px}
+.ibtn:active{background:var(--line)}
+#main{flex:1;display:flex;min-height:0;position:relative}
+#calw{flex:1;display:flex;flex-direction:column;min-width:0;padding:0 6px 0 10px}
+.calbar{display:flex;align-items:center;justify-content:space-between;height:44px}
+.calbar .t{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;text-transform:capitalize;min-width:0;white-space:nowrap}
+.seg{display:flex;background:var(--bg2);border-radius:10px;padding:3px}
+.seg button{font-size:13px;padding:5px 10px;min-width:30px;border-radius:8px;color:var(--tx2)}
+.seg button.on{background:var(--gold);color:var(--bg);font-weight:600}
+#flt{font-size:12px;color:var(--tx3);height:20px;display:flex;align-items:center;gap:6px}
+#flt .x{color:var(--gold)}
+#cal{flex:1;overflow-y:auto;padding-bottom:84px;touch-action:pan-y}
+.mg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.mg .wd{font-size:11px;color:var(--tx3);text-align:center;padding-bottom:2px}
+.dc{min-height:62px;background:var(--bg2);border-radius:8px;padding:3px 0 3px;font-size:12px;color:var(--tx2);overflow:hidden;position:relative}
+.dc .n{padding-left:5px;display:block;height:16px}
+.dc.out{opacity:.35}.dc.today{box-shadow:inset 0 0 0 1.5px var(--gold)}.dc.today .n{color:var(--gold);font-weight:700}
+.dc .bars{display:flex;flex-direction:column;gap:2px;margin-top:2px}
+.bar{height:7px}.bar.s{margin-left:45%;border-radius:4px 0 0 4px}.bar.e{margin-right:55%;border-radius:0 4px 4px 0}.bar.s.e{margin:0 30%;border-radius:4px}
+.more{font-size:10px;color:var(--tx3);padding-left:5px}
+.wk .row{display:flex;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.wk .row.today .d b{color:var(--gold)}
+.wk .d{width:44px;flex:none;font-size:12px;color:var(--tx2);text-transform:capitalize}.wk .d b{display:block;font-size:18px;color:var(--tx)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;flex:1;align-content:flex-start}
+.chip{font-size:12px;padding:4px 8px;border-radius:8px;color:#0b1a33;font-weight:600}
+.free{font-size:12px;color:var(--tx3);padding-top:4px}
+.yg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ym{background:var(--bg2);border-radius:12px;padding:10px 6px;text-align:center}
+.ym.cur{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.ym .m{font-size:13px;color:var(--tx2);text-transform:capitalize}.ym .c{font-size:24px;font-weight:600}.ym .l{font-size:11px;color:var(--tx3)}
+.ym .dots{display:flex;justify-content:center;gap:3px;margin-top:4px;min-height:6px}.ym .dots i{width:6px;height:6px;border-radius:50%}
+#hcol{width:74px;flex:none;display:flex;flex-direction:column;align-items:center;padding:0 6px 76px 0}
+#hlist{flex:1;overflow-y:auto;scroll-snap-type:y mandatory;display:flex;flex-direction:column;gap:9px;padding:4px 0;scrollbar-width:none}
+#hlist::-webkit-scrollbar{display:none}
+.hs{width:62px;min-height:66px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;scroll-snap-align:start;flex:none;color:#0b1a33;font-size:11px;font-weight:600;padding:4px;transition:transform .18s,box-shadow .18s;text-align:center;line-height:1.1;word-break:break-word}
+.hs svg.i{width:24px;height:24px;stroke-width:2}
+.hs.sel{transform:scale(1.07);box-shadow:0 0 0 2.5px var(--bg),0 0 0 4.5px var(--gold)}
+.hs.dim{opacity:.4}
+.hs.add{background:transparent;border:1.5px dashed var(--tx3);color:var(--tx2)}
+.arr{height:30px;width:44px;display:flex;align-items:center;justify-content:center;color:var(--tx2)}
+#fab{position:absolute;right:10px;bottom:calc(var(--nav) + var(--safe-b) - 30px);width:64px;height:64px;border-radius:50%;background:var(--gold);color:var(--bg);display:flex;align-items:center;justify-content:center;z-index:30;box-shadow:0 6px 18px rgba(0,0,0,.45);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+#fab svg.i{width:32px;height:32px;stroke-width:2.4}
+#fab.open{transform:rotate(45deg)}
+nav{height:calc(var(--nav) + var(--safe-b));padding:0 84px var(--safe-b) 4px;display:flex;border-top:1px solid var(--line);background:var(--bg);flex:none;position:relative;z-index:20}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--tx2)}
+nav button:active{color:var(--gold)}
+nav svg.i{width:25px;height:25px;color:var(--tx)}
+.pg{position:absolute;inset:0;background:var(--bg);z-index:40;display:flex;flex-direction:column;padding-top:var(--safe-t);transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.pg.in{transform:none}
+.pg.grow{top:calc(var(--hdr) + var(--safe-t));bottom:calc(var(--nav) + var(--safe-b));padding-top:0;transform:scale(.05);opacity:0;transform-origin:calc(100% - 42px) 100%;transition:transform .38s cubic-bezier(.2,.9,.25,1),opacity .2s;z-index:25;border-radius:18px 18px 0 0;background:var(--bg2);box-shadow:0 -8px 30px rgba(0,0,0,.35)}
+.pg.grow.in{transform:none;opacity:1}
+.ph{height:var(--hdr);display:flex;align-items:center;gap:6px;padding:0 8px;flex:none;border-bottom:1px solid var(--line)}
+.ph h2{font-size:18px;font-weight:600;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb{flex:1;overflow-y:auto;padding:14px 14px 100px}
+.grow .pb{padding-bottom:40px}
+.lbl{font-size:12px;color:var(--tx2);margin:12px 0 5px;display:block}
+.row2{display:flex;gap:10px}.row2>*{flex:1;min-width:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;background:var(--card);font-weight:600;margin-top:10px}
+.btn.gold{background:var(--gold);color:var(--bg)}.btn.red{background:transparent;color:var(--red);border:1px solid rgba(229,96,79,.4)}
+.btn:active{filter:brightness(1.15)}
+.li{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 12px;background:var(--bg2);border-radius:12px;margin-bottom:8px}
+.li .tt{flex:1;min-width:0}.li .tt b{display:block;font-weight:600}.li .tt small{color:var(--tx2);font-size:12px}
+.li .go{color:var(--tx3)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{background:var(--bg2);border-radius:14px;padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.tile svg.i{width:28px;height:28px;color:var(--gold)}
+.tile small{font-weight:400;color:var(--tx3);font-size:11px}
+.colors{display:flex;flex-wrap:wrap;gap:10px}
+.colors button{width:36px;height:36px;border-radius:50%}
+.colors button.on{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--tx)}
+.hchips{display:flex;flex-wrap:wrap;gap:8px}
+.hchips button{padding:8px 12px;border-radius:10px;background:var(--bg);border:1.5px solid var(--line);font-size:13px;display:flex;gap:6px;align-items:center}
+.hchips button.on{border-color:var(--gold);background:var(--card)}
+.err{color:var(--red);font-size:13px;margin-top:8px;min-height:18px}
+.sum{background:var(--bg);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13px;color:var(--tx2);display:flex;flex-wrap:wrap;gap:4px 14px}
+.sum b{color:var(--tx)}
+.sec{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin:18px 2px 8px;font-weight:600}
+.sec:first-child{margin-top:4px}
+.ev{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--bg2);border-radius:12px;margin-bottom:7px;width:100%;text-align:left}
+.ev .k{font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;flex:none}
+.ev .k.in{background:rgba(76,191,138,.18);color:var(--green)}.ev .k.out{background:rgba(229,96,79,.16);color:var(--red)}.ev .k.st{background:var(--line);color:var(--tx2)}
+.ev .tt{flex:1;min-width:0}.ev .tt b{display:block}.ev .tt small{color:var(--tx2);font-size:12px}
+.kv{display:flex;justify-content:space-between;padding:11px 2px;border-bottom:1px solid var(--line);gap:12px}.kv span{color:var(--tx2)}.kv b{text-align:right;font-weight:600;user-select:text;-webkit-user-select:text}
+.stat{background:var(--bg2);border-radius:12px;padding:12px}.stat small{color:var(--tx2);font-size:12px}.stat b{display:block;font-size:22px;margin-top:2px}
+.sw{display:flex;align-items:center;justify-content:space-between;padding:14px 12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;width:100%;text-align:left}
+.tg{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--tx2);transition:transform .2s,background .2s}
+.tg.on{background:var(--gold)}.tg.on::after{transform:translateX(18px);background:var(--bg)}
+.empty{text-align:center;color:var(--tx3);padding:40px 20px}.empty svg.i{width:46px;height:46px;color:var(--tx3);margin-bottom:8px}
+#dlgw{position:absolute;inset:0;background:rgba(2,8,20,.6);z-index:80;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s}
+#dlgw.in{opacity:1;pointer-events:auto}
+.dlg{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:20px;width:100%;max-width:360px;transform:scale(.92);transition:transform .25s cubic-bezier(.3,1.3,.5,1)}
+#dlgw.in .dlg{transform:none}
+.dlg h3{margin:0 0 8px;font-size:18px}.dlg p{margin:0;color:var(--tx2)}
+.dlg .bt{display:flex;gap:10px;margin-top:16px}.dlg .bt .btn{margin-top:0}
+.dlg img{width:64px;height:64px;border-radius:16px;display:block;margin:0 auto 12px}
+#toast{position:absolute;left:50%;bottom:calc(var(--nav) + var(--safe-b) + 50px);transform:translate(-50%,20px);background:var(--card);border:1px solid var(--line);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:90;pointer-events:none;white-space:nowrap}
+#toast.in{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <img src="icon.png" alt="">
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px"><span class="brand">B<b>&amp;</b>Better</span><button class="ver" id="ver"></button></div>
+      <div class="user" id="user"></div>
+    </div>
+    <button class="ibtn" id="menuBtn" aria-label="Menu"></button>
+  </header>
+  <div id="main">
+    <div id="calw">
+      <div class="calbar">
+        <div style="display:flex;align-items:center;min-width:0"><button class="ibtn" id="prev" style="width:34px" aria-label="Precedente"></button><span class="t" id="ttl"></span><button class="ibtn" id="next" style="width:34px" aria-label="Successivo"></button></div>
+        <div class="seg" id="seg"><button data-v="y" aria-label="Anno">A</button><button data-v="m" aria-label="Mese">M</button><button data-v="w" aria-label="Settimana">S</button></div>
+      </div>
+      <div id="flt"></div>
+      <div id="cal"></div>
+    </div>
+    <div id="hcol">
+      <button class="arr" id="hup" aria-label="Su"></button>
+      <div id="hlist"></div>
+      <button class="arr" id="hdn" aria-label="Giù"></button>
+    </div>
+  </div>
+  <nav>
+    <button data-sec="mov"></button>
+    <button data-sec="mat"></button>
+    <button data-sec="spe"></button>
+    <button data-sec="arc"></button>
+  </nav>
+  <button id="fab" aria-label="Nuovo check-in"></button>
+</div>
+<div id="dlgw"><div class="dlg" id="dlg"></div></div>
+<div id="toast"></div>
+<script>
+// ---------- icone ----------
+var IC = {
+  menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  back:'<path d="M15 6l-6 6 6 6"/>',
+  left:'<path d="M15 6l-6 6 6 6"/>', right:'<path d="M9 6l6 6-6 6"/>',
+  up:'<path d="M6 15l6-6 6 6"/>', down:'<path d="M6 9l6 6 6-6"/>',
+  home:'<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+  mov:'<path d="M4 8h12"/><path d="M13 5l3 3-3 3"/><path d="M20 16H8"/><path d="M11 13l-3 3 3 3"/>',
+  mat:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/><path d="M8 5.2l8 4.6"/>',
+  spe:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01M16 17h.01"/>',
+  arc:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><path d="M10 12h4"/>',
+  refresh:'<path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 4v7h-7"/>',
+  download:'<path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0114 0"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  cloud:'<path d="M7 18a4.5 4.5 0 01-.5-9A6 6 0 0118 8a4 4 0 01-1 10z"/><path d="M12 11v6M9.5 13.5L12 11l2.5 2.5"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  cal:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/>',
+  bed:'<path d="M3 18V8M3 14h18v4M21 14v-2a3 3 0 00-3-3h-7v5"/><circle cx="7" cy="11" r="1.5"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14a6 6 0 013.5 6"/>',
+  broom:'<path d="M14 4l6 6"/><path d="M17 7l-7 7"/><path d="M10 14l-6 6h6l3-3z"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M15 9.5a3 3 0 00-5.5 1M9 14.5a3 3 0 005.5-1M8 11h5M8 13h5"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/>'
+};
+function ic(n){ return '<svg class="i" viewBox="0 0 24 24">' + (IC[n]||'') + '</svg>' }
+var $ = function(s, r){ return (r||document).querySelector(s) };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] }) }
+function buzz(ms){ if (DB.set().vib !== false && navigator.vibrate) try{ navigator.vibrate(ms||12) }catch(e){} }
+function toast(t){ var e = $('#toast'); e.textContent = t; e.classList.add('in'); clearTimeout(e._t); e._t = setTimeout(function(){ e.classList.remove('in') }, 2200) }
+function eur(n){ return (Math.round((+n||0)*100)/100).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €' }
+
+// ---------- dati: unico modulo di accesso (in futuro collegabile a Firebase/Cloudflare) ----------
+var DB = (function(){
+  var K = 'bb-data', d;
+  try { d = JSON.parse(localStorage.getItem(K)) } catch(e){}
+  if (!d || !d.houses) d = { houses:[], bookings:[], settings:{ view:'m', vib:true, autoupd:true }, rev:0 };
+  function save(){ d.rev++; try{ localStorage.setItem(K, JSON.stringify(d)) }catch(e){ toast('Memoria piena: fai un backup') } }
+  function id(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6) }
+  return {
+    houses: function(){ return d.houses },
+    house: function(i){ return d.houses.find(function(h){ return h.id === i }) },
+    saveHouse: function(h){ if (!h.id){ h.id = id(); d.houses.push(h) } else { var i = d.houses.findIndex(function(x){ return x.id === h.id }); d.houses[i] = h } save(); return h },
+    delHouse: function(i){ d.houses = d.houses.filter(function(h){ return h.id !== i }); d.bookings = d.bookings.filter(function(b){ return b.house !== i }); save() },
+    moveHouse: function(i, dir){ var a = d.houses, k = a.findIndex(function(h){ return h.id === i }), j = k + dir; if (j < 0 || j >= a.length) return; var t = a[k]; a[k] = a[j]; a[j] = t; save() },
+    bookings: function(){ return d.bookings },
+    booking: function(i){ return d.bookings.find(function(b){ return b.id === i }) },
+    saveBooking: function(b){ if (!b.id){ b.id = id(); b.created = Date.now(); d.bookings.push(b) } else { var i = d.bookings.findIndex(function(x){ return x.id === b.id }); d.bookings[i] = b } save(); return b },
+    delBooking: function(i){ d.bookings = d.bookings.filter(function(b){ return b.id !== i }); save() },
+    set: function(k, v){ if (k === undefined) return d.settings; d.settings[k] = v; save() },
+    dump: function(){ return JSON.stringify({ app:'B&Better', v:APPV, at:new Date().toISOString(), data:d }) },
+    restore: function(txt){ var o = JSON.parse(txt); o = o.data || o; if (!o.houses || !o.bookings) throw 0; d = o; d.settings = d.settings || {}; save() }
+  };
+})();
+
+// ---------- date ----------
+var MESI = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+var GG = ['lun','mar','mer','gio','ven','sab','dom'];
+function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') }
+function pd(s){ var p = s.split('-'); return new Date(+p[0], p[1]-1, +p[2]) }
+function addD(s, n){ var d = pd(s); d.setDate(d.getDate()+n); return iso(d) }
+function nights(a, b){ return Math.round((pd(b) - pd(a)) / 864e5) }
+function today(){ return iso(new Date()) }
+function fd(s, long){ var d = pd(s); return (long ? GG[(d.getDay()+6)%7] + ' ' : '') + d.getDate() + ' ' + MESI[d.getMonth()].slice(0, long ? 20 : 3) + (long && d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : '') }
+
+// ---------- stato schermata principale ----------
+var S = { view: DB.set().view || 'm', cur: today(), sel: null };
+var COLORS = ['#d9ae55','#4cc3a4','#ef8a68','#9b8cf0','#ec7fa6','#8fcc5a','#5aa9ec','#f2b04c','#e5604f','#5fd0dc','#c6d64a','#b2b6c4'];
+function hcol(id){ var h = DB.house(id); return h ? h.color : '#888' }
+function visBk(){ return DB.bookings().filter(function(b){ return !S.sel || b.house === S.sel }) }
+
+function render(){
+  var st = DB.set();
+  $('#user').textContent = st.user ? st.user : '';
+  $('#ver').innerHTML = 'v' + APPV + ' ' + ic('refresh');
+  $('#ver').classList.toggle('new', !!UPD.remote);
+  document.querySelectorAll('#seg button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === S.view) });
+  var h = S.sel && DB.house(S.sel);
+  $('#flt').innerHTML = h ? '<span class="dot" style="background:' + h.color + '"></span>Solo ' + esc(h.name) + ' <button class="x" id="fltx">· tutte le case</button>' : (DB.houses().length ? 'Tutte le case' : 'Aggiungi la prima casa dalla colonna a destra');
+  if ($('#fltx')) $('#fltx').onclick = function(){ S.sel = null; render() };
+  ({ m:renderMonth, w:renderWeek, y:renderYear })[S.view]();
+  renderHouses();
+}
+function renderMonth(){
+  var c = pd(S.cur), y = c.getFullYear(), m = c.getMonth();
+  $('#ttl').textContent = MESI[m] + ' ' + y;
+  var first = new Date(y, m, 1), start = new Date(y, m, 1 - (first.getDay()+6)%7), bk = visBk(), t = today();
+  var h = '<div class="mg">' + GG.map(function(g){ return '<div class="wd">' + g + '</div>' }).join('');
+  for (var i = 0; i < 42; i++){
+    var d = new Date(start); d.setDate(start.getDate()+i); var s = iso(d);
+    if (i === 35 && d.getMonth() !== m) break;
+    var on = bk.filter(function(b){ return b.ci <= s && s <= b.co });
+    h += '<button class="dc' + (d.getMonth() !== m ? ' out' : '') + (s === t ? ' today' : '') + '" data-d="' + s + '"><span class="n">' + d.getDate() + '</span><div class="bars">' +
+      on.slice(0,4).map(function(b){ return '<div class="bar' + (b.ci === s ? ' s' : '') + (b.co === s ? ' e' : '') + '" style="background:' + hcol(b.house) + '"></div>' }).join('') +
+      '</div>' + (on.length > 4 ? '<div class="more">+' + (on.length-4) + '</div>' : '') + '</button>';
+  }
+  $('#cal').innerHTML = h + '</div>';
+  $('#cal').querySelectorAll('.dc').forEach(function(e){ e.onclick = function(){ openDay(e.dataset.d) } });
+}
+function weekStart(s){ var d = pd(s); d.setDate(d.getDate() - (d.getDay()+6)%7); return iso(d) }
+function renderWeek(){
+  var s0 = weekStart(S.cur), bk = visBk(), t = today(), e0 = addD(s0, 6);
+  $('#ttl').textContent = pd(s0).getDate() + ' ' + MESI[pd(s0).getMonth()].slice(0,3) + ' – ' + pd(e0).getDate() + ' ' + MESI[pd(e0).getMonth()].slice(0,3);
+  var h = '<div class="wk">';
+  for (var i = 0; i < 7; i++){
+    var s = addD(s0, i), on = bk.filter(function(b){ return b.ci <= s && s <= b.co });
+    h += '<button class="row' + (s === t ? ' today' : '') + '" data-d="' + s + '" style="width:100%;text-align:left"><div class="d">' + GG[i] + '<b>' + pd(s).getDate() + '</b></div><div class="chips">' +
+      (on.length ? on.map(function(b){ var hs = DB.house(b.house); return '<span class="chip" style="background:' + hcol(b.house) + '">' + esc(hs ? hs.name : '?') + (b.ci === s ? ' · arrivo' : b.co === s ? ' · partenza' : '') + '</span>' }).join('') : '<span class="free">libero</span>') + '</div></button>';
+  }
+  $('#cal').innerHTML = h + '</div>';
+  $('#cal').querySelectorAll('.row').forEach(function(e){ e.onclick = function(){ openDay(e.dataset.d) } });
+}
+function renderYear(){
+  var y = pd(S.cur).getFullYear(), bk = visBk(), now = new Date();
+  $('#ttl').textContent = y;
+  var h = '<div class="yg">';
+  for (var m = 0; m < 12; m++){
+    var p = y + '-' + String(m+1).padStart(2,'0'), l = bk.filter(function(b){ return b.ci.slice(0,7) === p });
+    var hs = []; l.forEach(function(b){ if (hs.indexOf(b.house) < 0) hs.push(b.house) });
+    h += '<button class="ym' + (y === now.getFullYear() && m === now.getMonth() ? ' cur' : '') + '" data-m="' + m + '"><div class="m">' + MESI[m].slice(0,3) + '</div><div class="c">' + l.length + '</div><div class="l">' + (l.length === 1 ? 'arrivo' : 'arrivi') + '</div><div class="dots">' + hs.slice(0,6).map(function(x){ return '<i style="background:' + hcol(x) + '"></i>' }).join('') + '</div></button>';
+  }
+  $('#cal').innerHTML = h + '</div>';
+  $('#cal').querySelectorAll('.ym').forEach(function(e){ e.onclick = function(){ S.cur = iso(new Date(y, +e.dataset.m, 1)); setView('m') } });
+}
+function setView(v){ S.view = v; DB.set('view', v); render() }
+function shift(dir){
+  var d = pd(S.cur);
+  if (S.view === 'm'){ d = new Date(d.getFullYear(), d.getMonth()+dir, 1) } else if (S.view === 'w'){ d.setDate(d.getDate() + 7*dir) } else { d = new Date(d.getFullYear()+dir, d.getMonth(), 1) }
+  S.cur = iso(d); buzz(8);
+  var c = $('#cal'); c.style.transition = 'none'; c.style.opacity = 0; c.style.transform = 'translateX(' + (dir*30) + 'px)';
+  render(); requestAnimationFrame(function(){ c.style.transition = 'transform .22s, opacity .22s'; c.style.opacity = 1; c.style.transform = 'none' });
+}
+function renderHouses(){
+  var l = $('#hlist'), hs = DB.houses();
+  l.innerHTML = hs.map(function(h){ return '<button class="hs' + (S.sel === h.id ? ' sel' : S.sel ? ' dim' : '') + '" data-h="' + h.id + '" style="background:' + h.color + '">' + ic('home') + '<span>' + esc(h.name) + '</span></button>' }).join('') +
+    '<button class="hs add" id="hadd">' + ic('plus') + '<span>Casa</span></button>';
+  l.querySelectorAll('[data-h]').forEach(function(e){ e.onclick = function(){
+    var id = e.dataset.h; buzz();
+    if (S.sel === id) openHouse(id); else { S.sel = id; render() }
+  } });
+  $('#hadd').onclick = function(){ openHouseEdit() };
+}
+
+// ---------- navigazione: ogni pannello entra nella cronologia, cosi' il tasto indietro funziona ovunque ----------
+var STACK = [];
+function openPage(o){
+  var p = document.createElement('div'); p.className = 'pg' + (o.grow ? ' grow' : '');
+  p.innerHTML = '<div class="ph"><button class="ibtn" data-back aria-label="Indietro">' + ic('back') + '</button><h2></h2>' + (o.action || '') + '</div><div class="pb"></div>';
+  $('h2', p).textContent = o.title;
+  p._o = o; p.render = function(){ var b = $('.pb', p), sc = b.scrollTop; b.innerHTML = ''; o.build(b, p); b.scrollTop = sc };
+  document.body.appendChild(p); p.render();
+  $('[data-back]', p).onclick = function(){ history.back() };
+  STACK.push(p); history.pushState({ bb: STACK.length }, '');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ p.classList.add('in') }) });
+  if (o.grow) $('#fab').classList.add('open');
+  return p;
+}
+function closeTop(){
+  var p = STACK.pop(); if (!p) return;
+  if (p === DLG){ $('#dlgw').classList.remove('in'); DLG = null; return }
+  p.classList.remove('in'); setTimeout(function(){ p.remove() }, 380);
+  if (p._o.grow) $('#fab').classList.remove('open');
+  if (p._o.onclose) p._o.onclose();
+}
+window.addEventListener('popstate', function(){ closeTop() });
+function back(n){ history.go(-(n||1)) }
+function refreshAll(){ render(); STACK.forEach(function(p){ if (p.render) p.render() }) }
+
+// ---------- finestre di dialogo ----------
+var DLG = null;
+function dialog(o){
+  var d = $('#dlg');
+  d.innerHTML = (o.img ? '<img src="icon.png" alt="">' : '') + '<h3></h3><div class="db"></div><div class="bt"></div>';
+  $('h3', d).textContent = o.title;
+  if (o.html) $('.db', d).innerHTML = o.html; else { var p = document.createElement('p'); p.textContent = o.text || ''; $('.db', d).appendChild(p) }
+  (o.buttons || [{ t:'OK' }]).forEach(function(b){
+    var e = document.createElement('button'); e.className = 'btn ' + (b.cls || ''); e.textContent = b.t;
+    e.onclick = function(){ if (b.fn && b.fn(d) === false) return; if (DLG) back() };
+    $('.bt', d).appendChild(e);
+  });
+  DLG = { _o:{} }; STACK.push(DLG); history.pushState({ bb: STACK.length }, '');
+  $('#dlgw').classList.add('in');
+  var inp = $('input', d); if (inp) setTimeout(function(){ inp.focus() }, 250);
+}
+$('#dlgw').onclick = function(e){ if (e.target.id === 'dlgw' && DLG && !DLG.lock) back() };
+function confirmDo(title, text, label, fn){ dialog({ title:title, text:text, buttons:[{ t:'Annulla' }, { t:label, cls:'red', fn:function(){ setTimeout(fn, 50) } }] }) }
+
+// ---------- prenotazioni ----------
+function openAdd(pre){
+  pre = pre || {};
+  var hs = DB.houses();
+  if (!hs.length){ toast('Prima aggiungi una casa'); openHouseEdit(); return }
+  var b = pre.id ? JSON.parse(JSON.stringify(DB.booking(pre.id))) : { house: pre.house || S.sel || hs[0].id, ci: pre.ci || today(), co: addD(pre.ci || today(), 1), guests:2 };
+  openPage({ title: b.id ? 'Modifica prenotazione' : 'Nuovo check-in / out', grow:true, build:function(el){
+    el.innerHTML = '<span class="lbl" style="margin-top:0">Casa</span><div class="hchips">' + DB.houses().map(function(h){ return '<button data-h="' + h.id + '" class="' + (b.house === h.id ? 'on' : '') + '"><span class="dot" style="background:' + h.color + '"></span>' + esc(h.name) + '</button>' }).join('') + '</div>' +
+      '<span class="lbl">Ospite</span><input id="fg" placeholder="Nome e cognome" value="' + esc(b.guest) + '">' +
+      '<span class="lbl">Telefono</span><input id="fp" type="tel" placeholder="+39 333 1234567" value="' + esc(b.phone) + '">' +
+      '<div class="row2"><div><span class="lbl">Check-in</span><input id="fci" type="date" value="' + b.ci + '"></div><div><span class="lbl">Check-out</span><input id="fco" type="date" value="' + b.co + '"></div></div>' +
+      '<div class="row2"><div><span class="lbl">Ospiti</span><input id="fn" type="number" min="1" step="1" inputmode="numeric" value="' + (b.guests||1) + '"></div><div><span class="lbl">Prezzo totale €</span><input id="fpr" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" value="' + (b.price||'') + '"></div></div>' +
+      '<span class="lbl">Acconto ricevuto €</span><input id="fac" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" value="' + (b.deposit||'') + '">' +
+      '<span class="lbl">Note</span><textarea id="fno" rows="2" placeholder="Orario di arrivo, richieste...">' + esc(b.notes) + '</textarea>' +
+      '<div class="sum" id="fsum"></div><div class="err" id="ferr"></div><button class="btn gold" id="fsave">' + (b.id ? 'Salva modifiche' : 'Salva') + '</button>';
+    el.querySelectorAll('.hchips button').forEach(function(e){ e.onclick = function(){ b.house = e.dataset.h; el.querySelectorAll('.hchips button').forEach(function(x){ x.classList.toggle('on', x === e) }); upd() } });
+    function read(){ b.guest = $('#fg', el).value.trim(); b.phone = $('#fp', el).value.trim(); b.ci = $('#fci', el).value; b.co = $('#fco', el).value; b.guests = Math.max(1, parseInt($('#fn', el).value) || 1); b.price = parseFloat($('#fpr', el).value) || 0; b.deposit = parseFloat($('#fac', el).value) || 0; b.notes = $('#fno', el).value.trim() }
+    function upd(){
+      read(); $('#ferr', el).textContent = '';
+      var n = b.ci && b.co ? nights(b.ci, b.co) : 0, h = DB.house(b.house);
+      b.tax = taxFor(h, b.guests, n);
+      $('#fsum', el).innerHTML = '<span>Notti <b>' + Math.max(0,n) + '</b></span>' + (b.price ? '<span>Saldo <b>' + eur(b.price - b.deposit) + '</b></span>' : '') + '<span>Tassa soggiorno <b>' + eur(b.tax) + '</b></span>';
+    }
+    $('#fci', el).onchange = function(){ if ($('#fco', el).value <= $('#fci', el).value) $('#fco', el).value = addD($('#fci', el).value, 1); upd() };
+    el.querySelectorAll('input').forEach(function(i){ i.addEventListener('input', upd) });
+    upd();
+    $('#fsave', el).onclick = function(){
+      upd(); var e = $('#ferr', el);
+      if (!b.house) return e.textContent = 'Scegli la casa';
+      if (!b.guest) return e.textContent = 'Scrivi il nome dell\'ospite';
+      if (!b.ci || !b.co || b.co <= b.ci) return e.textContent = 'Il check-out deve essere dopo il check-in';
+      var clash = DB.bookings().find(function(x){ return x.house === b.house && x.id !== b.id && b.ci < x.co && b.co > x.ci });
+      if (clash) return e.textContent = 'La casa è già occupata da ' + clash.guest + ' (' + fd(clash.ci) + ' – ' + fd(clash.co) + ')';
+      DB.saveBooking(b); buzz(25); toast(pre.id ? 'Prenotazione aggiornata' : 'Prenotazione salvata');
+      S.cur = b.ci; back(); refreshAll();
+    };
+  } });
+}
+function taxFor(h, g, n){ if (!h || !h.tax || n <= 0) return 0; var nn = h.taxMax ? Math.min(n, h.taxMax) : n; return Math.round(h.tax * g * nn * 100) / 100 }
+function openBooking(id){
+  openPage({ title:'Prenotazione', action:'<button class="ibtn" id="bkEd" aria-label="Modifica">' + ic('edit') + '</button>', build:function(el, p){
+    var b = DB.booking(id); if (!b){ el.innerHTML = '<div class="empty">Prenotazione eliminata</div>'; return }
+    var h = DB.house(b.house), n = nights(b.ci, b.co);
+    el.innerHTML = '<div class="li" style="background:' + hcol(b.house) + ';color:#0b1a33">' + ic('home') + '<div class="tt"><b>' + esc(h ? h.name : '?') + '</b><small style="color:#0b1a33">' + esc(b.guest) + '</small></div></div>' +
+      kv('Check-in', fd(b.ci, true)) + kv('Check-out', fd(b.co, true)) + kv('Notti', n) + kv('Ospiti', b.guests) +
+      (b.phone ? kv('Telefono', '<a href="tel:' + esc(b.phone) + '" style="color:var(--gold)">' + esc(b.phone) + '</a>', 1) : '') +
+      kv('Prezzo', eur(b.price)) + kv('Acconto', eur(b.deposit)) + kv('Saldo', eur((b.price||0) - (b.deposit||0))) + kv('Tassa soggiorno', eur(b.tax)) +
+      (b.notes ? '<span class="lbl">Note</span><div style="white-space:pre-wrap;user-select:text;-webkit-user-select:text">' + esc(b.notes) + '</div>' : '') +
+      '<button class="btn" id="bkE">' + ic('edit') + 'Modifica</button><button class="btn red" id="bkD">' + ic('trash') + 'Elimina</button>';
+    $('#bkE', el).onclick = $('#bkEd', p).onclick = function(){ openAdd({ id:id }) };
+    $('#bkD', el).onclick = function(){ confirmDo('Eliminare la prenotazione?', b.guest + ', ' + fd(b.ci) + ' – ' + fd(b.co) + '. Non si può annullare.', 'Elimina', function(){ DB.delBooking(id); toast('Prenotazione eliminata'); back(); refreshAll() }) };
+  } });
+}
+function kv(k, v, raw){ return '<div class="kv"><span>' + k + '</span><b>' + (raw ? v : esc(v)) + '</b></div>' }
+function evRow(b, kind){
+  var h = DB.house(b.house), lab = { in:'ARRIVO', out:'PARTENZA', st:'IN CASA' }[kind];
+  return '<button class="ev" data-b="' + b.id + '"><span class="dot" style="background:' + hcol(b.house) + '"></span><div class="tt"><b>' + esc(b.guest) + '</b><small>' + esc(h ? h.name : '?') + ' · ' + fd(b.ci) + ' – ' + fd(b.co) + ' · ' + b.guests + ' osp.</small></div><span class="k ' + kind + '">' + lab + '</span></button>';
+}
+function bindEv(el){ el.querySelectorAll('[data-b]').forEach(function(e){ e.onclick = function(){ openBooking(e.dataset.b) } }) }
+function openDay(s){
+  openPage({ title: fd(s, true), build:function(el){
+    var bk = visBk(), l = bk.filter(function(b){ return b.ci <= s && s <= b.co });
+    el.innerHTML = (l.length ? l.map(function(b){ return evRow(b, b.ci === s ? 'in' : b.co === s ? 'out' : 'st') }).join('') : '<div class="empty">' + ic('cal') + '<div>Nessun movimento in questo giorno</div></div>') +
+      '<button class="btn gold" id="dAdd">' + ic('plus') + 'Nuovo check-in da questo giorno</button>';
+    bindEv(el);
+    $('#dAdd', el).onclick = function(){ openAdd({ ci:s }) };
+  } });
+}
+
+// ---------- case ----------
+function openHouse(id){
+  openPage({ title:'', build:function(el, p){
+    var h = DB.house(id); if (!h){ el.innerHTML = '<div class="empty">Casa eliminata</div>'; return }
+    $('h2', p).textContent = h.name;
+    var bk = DB.bookings().filter(function(b){ return b.house === id }), t = today();
+    var now = bk.find(function(b){ return b.ci <= t && t < b.co }), next = bk.filter(function(b){ return b.ci > t }).sort(function(a, b){ return a.ci < b.ci ? -1 : 1 })[0];
+    el.innerHTML = '<div class="li" style="background:' + h.color + ';color:#0b1a33">' + ic('home') + '<div class="tt"><b>' + esc(h.name) + '</b><small style="color:#0b1a33">' + esc(h.addr || 'Nessun indirizzo') + '</small></div></div>' +
+      '<div class="sum" style="margin:0 0 14px">' + (now ? '<span>Ora: <b>' + esc(now.guest) + '</b> fino al ' + fd(now.co) + '</span>' : '<span><b>Libera</b> oggi</span>') + (next ? '<span>Prossimo arrivo: <b>' + fd(next.ci) + '</b></span>' : '') + '</div>' +
+      '<div class="grid2">' + [['pren','cal','Prenotazioni',bk.filter(function(b){ return b.co >= t }).length + ' in arrivo'],['add','plus','Nuovo check-in',''],['osp','users','Ospiti','in arrivo'],['pul','broom','Pulizie','in arrivo'],['tax','coin','Tassa soggiorno',h.tax ? eur(h.tax) + ' a notte' : 'da impostare'],['set','gear','Impostazioni casa','']].map(function(x){ return '<button class="tile" data-t="' + x[0] + '">' + ic(x[1]) + x[2] + (x[3] ? '<small>' + x[3] + '</small>' : '') + '</button>' }).join('') + '</div>';
+    el.querySelectorAll('.tile').forEach(function(e){ e.onclick = function(){
+      var k = e.dataset.t;
+      if (k === 'pren') openHouseBookings(id); else if (k === 'add') openAdd({ house:id }); else if (k === 'set' || k === 'tax') openHouseEdit(id); else toast('Sezione in arrivo nelle prossime versioni');
+    } });
+  } });
+}
+function openHouseBookings(id){
+  openPage({ title:'Prenotazioni · ' + (DB.house(id) || {}).name, build:function(el){
+    var t = today(), bk = DB.bookings().filter(function(b){ return b.house === id }).sort(function(a, b){ return a.ci < b.ci ? -1 : 1 });
+    var fut = bk.filter(function(b){ return b.co >= t }), past = bk.filter(function(b){ return b.co < t }).reverse();
+    el.innerHTML = (fut.length ? '<div class="sec">In corso e in arrivo</div>' + fut.map(function(b){ return evRow(b, b.ci <= t ? 'st' : 'in') }).join('') : '<div class="empty">' + ic('cal') + '<div>Nessuna prenotazione in arrivo</div></div>') +
+      (past.length ? '<div class="sec">Passate</div>' + past.slice(0, 30).map(function(b){ return evRow(b, 'out') }).join('') : '');
+    bindEv(el);
+  } });
+}
+function openHouseEdit(id){
+  var h = id ? JSON.parse(JSON.stringify(DB.house(id))) : { name:'', color: COLORS[DB.houses().length % COLORS.length], addr:'', tax:0, taxMax:0 };
+  openPage({ title: id ? 'Impostazioni casa' : 'Nuova casa', build:function(el){
+    el.innerHTML = '<span class="lbl" style="margin-top:0">Nome</span><input id="hn" maxlength="18" placeholder="Casa al mare" value="' + esc(h.name) + '">' +
+      '<span class="lbl">Colore</span><div class="colors">' + COLORS.map(function(c){ return '<button data-c="' + c + '" class="' + (c === h.color ? 'on' : '') + '" style="background:' + c + '" aria-label="Colore"></button>' }).join('') + '</div>' +
+      '<span class="lbl">Indirizzo</span><input id="ha" placeholder="Via Roma 1, Città" value="' + esc(h.addr) + '">' +
+      '<div class="row2"><div><span class="lbl">Tassa soggiorno €/persona/notte</span><input id="ht" type="number" min="0" step="0.01" inputmode="decimal" value="' + (h.tax||'') + '" placeholder="0,00"></div><div><span class="lbl">Max notti tassate</span><input id="hm" type="number" min="0" step="1" inputmode="numeric" value="' + (h.taxMax||'') + '" placeholder="nessun limite"></div></div>' +
+      '<div class="err" id="herr"></div><button class="btn gold" id="hs">Salva</button>' + (id ? '<button class="btn red" id="hd">' + ic('trash') + 'Elimina casa</button>' : '');
+    el.querySelectorAll('.colors button').forEach(function(e){ e.onclick = function(){ h.color = e.dataset.c; el.querySelectorAll('.colors button').forEach(function(x){ x.classList.toggle('on', x === e) }) } });
+    $('#hs', el).onclick = function(){
+      h.name = $('#hn', el).value.trim(); h.addr = $('#ha', el).value.trim(); h.tax = parseFloat($('#ht', el).value) || 0; h.taxMax = parseInt($('#hm', el).value) || 0;
+      if (!h.name) return $('#herr', el).textContent = 'Dai un nome alla casa';
+      var saved = DB.saveHouse(h); buzz(25); toast(id ? 'Casa aggiornata' : 'Casa aggiunta');
+      if (!id){ S.sel = saved.id } back(); refreshAll();
+    };
+    if (id) $('#hd', el).onclick = function(){ var n = DB.bookings().filter(function(b){ return b.house === id }).length; confirmDo('Eliminare ' + h.name + '?', 'Verranno eliminate anche le sue ' + n + ' prenotazioni. Non si può annullare.', 'Elimina', function(){ DB.delHouse(id); if (S.sel === id) S.sel = null; toast('Casa eliminata'); back(); refreshAll() }) };
+  } });
+}
+function openHouses(){
+  openPage({ title:'Gestione case', build:function(el){
+    var hs = DB.houses();
+    el.innerHTML = (hs.length ? hs.map(function(h, i){ return '<div class="li"><span class="dot" style="background:' + h.color + ';width:18px;height:18px"></span><button class="tt" data-e="' + h.id + '" style="text-align:left"><b>' + esc(h.name) + '</b><small>' + esc(h.addr || '') + '</small></button><button class="ibtn" data-u="' + h.id + '" style="width:36px' + (i ? '' : ';opacity:.25') + '" aria-label="Sposta su">' + ic('up') + '</button><button class="ibtn" data-dn="' + h.id + '" style="width:36px' + (i < hs.length-1 ? '' : ';opacity:.25') + '" aria-label="Sposta giù">' + ic('down') + '</button></div>' }).join('') : '<div class="empty">' + ic('home') + '<div>Nessuna casa in gestione</div></div>') +
+      '<button class="btn gold" id="hAdd">' + ic('plus') + 'Aggiungi casa</button>';
+    el.querySelectorAll('[data-e]').forEach(function(e){ e.onclick = function(){ openHouseEdit(e.dataset.e) } });
+    el.querySelectorAll('[data-u]').forEach(function(e){ e.onclick = function(){ DB.moveHouse(e.dataset.u, -1); refreshAll() } });
+    el.querySelectorAll('[data-dn]').forEach(function(e){ e.onclick = function(){ DB.moveHouse(e.dataset.dn, 1); refreshAll() } });
+    $('#hAdd', el).onclick = function(){ openHouseEdit() };
+  } });
+}
+
+// ---------- sezioni barra in basso ----------
+function openSection(k){
+  var T = { mov:'Movimenti', mat:'Materiali', spe:'Spese e conteggi', arc:'Archivio' };
+  openPage({ title:T[k], build:function(el){
+    var t = today(), bk = visBk(), h = '';
+    if (k === 'mov'){
+      var ev = [];
+      bk.forEach(function(b){ if (b.ci >= t && b.ci <= addD(t, 30)) ev.push([b.ci, 'in', b]); if (b.co >= t && b.co <= addD(t, 30)) ev.push([b.co, 'out', b]) });
+      ev.sort(function(a, b){ return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : (a[1] === 'out' ? -1 : 1) });
+      var stay = bk.filter(function(b){ return b.ci < t && t < b.co }), last = '';
+      ev.forEach(function(e){ if (e[0] !== last){ last = e[0]; h += '<div class="sec">' + (e[0] === t ? 'Oggi' : e[0] === addD(t,1) ? 'Domani' : fd(e[0], true)) + '</div>' } h += evRow(e[2], e[1]) });
+      h = (stay.length ? '<div class="sec">Ospiti in casa ora</div>' + stay.map(function(b){ return evRow(b, 'st') }).join('') : '') + (h || '<div class="empty">' + ic('mov') + '<div>Nessun check-in o check-out nei prossimi 30 giorni</div></div>');
+    } else if (k === 'spe'){
+      var c = pd(S.cur), p = c.getFullYear() + '-' + String(c.getMonth()+1).padStart(2,'0'), l = bk.filter(function(b){ return b.ci.slice(0,7) === p });
+      var tot = 0, dep = 0, tax = 0, nn = 0; l.forEach(function(b){ tot += b.price||0; dep += b.deposit||0; tax += b.tax||0; nn += nights(b.ci, b.co) });
+      h = '<div class="sec" style="text-transform:none;font-size:15px;letter-spacing:0">Arrivi di ' + MESI[c.getMonth()] + ' ' + c.getFullYear() + '</div><div class="grid2">' +
+        '<div class="stat"><small>Incasso previsto</small><b>' + eur(tot) + '</b></div><div class="stat"><small>Acconti ricevuti</small><b>' + eur(dep) + '</b></div>' +
+        '<div class="stat"><small>Da incassare</small><b>' + eur(tot - dep) + '</b></div><div class="stat"><small>Tassa di soggiorno</small><b>' + eur(tax) + '</b></div>' +
+        '<div class="stat"><small>Prenotazioni</small><b>' + l.length + '</b></div><div class="stat"><small>Notti</small><b>' + nn + '</b></div></div>' +
+        '<div class="free" style="margin-top:14px">Il mese è quello mostrato nel calendario. ' + (S.sel ? 'Conteggi solo per la casa selezionata.' : 'Conteggi di tutte le case.') + ' Registro spese in arrivo nelle prossime versioni.</div>';
+    } else if (k === 'arc'){
+      var past = bk.filter(function(b){ return b.co < t }).sort(function(a, b){ return a.ci > b.ci ? -1 : 1 }), lm = '';
+      past.forEach(function(b){ var m = b.ci.slice(0,7); if (m !== lm){ lm = m; var d = pd(b.ci); h += '<div class="sec">' + MESI[d.getMonth()] + ' ' + d.getFullYear() + '</div>' } h += evRow(b, 'out') });
+      h = h || '<div class="empty">' + ic('arc') + '<div>Qui finiranno i soggiorni conclusi</div></div>';
+    } else {
+      h = '<div class="empty">' + ic('mat') + '<div>Materiali e scorte delle case (lenzuola, asciugamani, prodotti) arriveranno nelle prossime versioni</div></div>';
+    }
+    el.innerHTML = h; bindEv(el);
+  } });
+}
+
+// ---------- menu ----------
+function openMenu(){
+  openPage({ title:'Menu', build:function(el){
+    var it = [['prof','user','Profilo utente',DB.set().user||''],['case','home','Gestione case',DB.houses().length + ' case'],['set','gear','Impostazioni',''],['bak','cloud','Backup dati',''],['upd','refresh','Verifica aggiornamenti','Versione ' + APPV],['dl','download','Scarica app','Ultima APK da GitHub'],['info','info','Informazioni','']];
+    el.innerHTML = it.map(function(x){ return '<button class="li" data-m="' + x[0] + '">' + ic(x[1]) + '<div class="tt"><b>' + x[2] + '</b>' + (x[3] ? '<small>' + esc(x[3]) + '</small>' : '') + '</div><span class="go">' + ic('right') + '</span></button>' }).join('');
+    el.querySelectorAll('[data-m]').forEach(function(e){ e.onclick = function(){ ({ prof:openProfile, case:openHouses, set:openSettings, bak:openBackup, upd:function(){ checkUpdate(true) }, dl:downloadApp, info:openInfo })[e.dataset.m]() } });
+  } });
+}
+function openProfile(){
+  openPage({ title:'Profilo utente', build:function(el){
+    el.innerHTML = '<span class="lbl" style="margin-top:0">Il tuo nome</span><input id="un" maxlength="24" placeholder="Fabio" value="' + esc(DB.set().user) + '"><div class="free" style="margin-top:8px">Il nome serve anche per la condivisione: chi gestisce le prenotazioni potrà mandarti i check-in e out.</div><button class="btn gold" id="us">Salva</button>';
+    $('#us', el).onclick = function(){ DB.set('user', $('#un', el).value.trim()); toast('Profilo salvato'); back(); refreshAll() };
+  } });
+}
+function openSettings(){
+  openPage({ title:'Impostazioni', build:function(el){
+    var st = DB.set();
+    el.innerHTML = sw('vib', 'Vibrazione al tocco', st.vib !== false) + sw('autoupd', 'Avviso automatico aggiornamenti', st.autoupd !== false) +
+      '<div class="free" style="margin-top:6px">La vista del calendario (anno, mese, settimana) resta quella che hai usato per ultima.</div>';
+    el.querySelectorAll('.sw').forEach(function(e){ e.onclick = function(){ var k = e.dataset.k, v = !(DB.set()[k] !== false); DB.set(k, v); $('.tg', e).classList.toggle('on', v); buzz() } });
+  } });
+}
+function sw(k, t, on){ return '<button class="sw" data-k="' + k + '"><span>' + t + '</span><span class="tg' + (on ? ' on' : '') + '"></span></button>' }
+function openBackup(){
+  openPage({ title:'Backup dati', build:function(el){
+    el.innerHTML = '<div class="free">Il backup copia tutte le case e le prenotazioni come testo. Incollalo in un messaggio o in una nota per conservarlo.</div><button class="btn gold" id="bc">' + ic('cloud') + 'Copia backup</button>' +
+      '<span class="lbl" style="margin-top:22px">Ripristina da backup</span><textarea id="bt" rows="4" placeholder="Incolla qui il testo del backup"></textarea><div class="err" id="be"></div><button class="btn" id="br">Ripristina</button>';
+    $('#bc', el).onclick = function(){
+      var t = DB.dump();
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function(){ toast('Backup copiato') }, function(){ $('#bt', el).value = t; toast('Copia il testo dal riquadro') });
+    };
+    $('#br', el).onclick = function(){
+      var t = $('#bt', el).value.trim(); if (!t) return $('#be', el).textContent = 'Incolla prima il backup';
+      try { JSON.parse(t) } catch(e){ return $('#be', el).textContent = 'Il testo non è un backup valido' }
+      confirmDo('Ripristinare il backup?', 'I dati attuali verranno sostituiti.', 'Ripristina', function(){ try { DB.restore(t); S.sel = null; toast('Backup ripristinato'); back(); refreshAll() } catch(e){ $('#be', el).textContent = 'Il testo non è un backup valido' } });
+    };
+  } });
+}
+function openInfo(){
+  openPage({ title:'Informazioni', build:function(el){
+    el.innerHTML = '<div style="text-align:center;padding:10px 0 20px"><img src="icon.png" alt="" style="width:110px;height:110px;border-radius:26px"><div class="brand" style="font-size:24px;margin-top:10px">B<b>&amp;</b>Better</div><div class="user" style="font-size:13px;margin-top:6px">Gestionale per B&amp;B e case vacanza</div></div>' +
+      kv('Versione', APPV) + kv('Guscio Android', NATIVE) + kv('Case', DB.houses().length) + kv('Prenotazioni', DB.bookings().length) + kv('Sviluppo', 'Federico · E-Duck Garage');
+  } });
+}
+function downloadApp(){ window.open(APK_URL, '_blank') }
+
+// ---------- aggiornamenti ----------
+var UPD = { remote:null, native:false, last:0 };
+function checkUpdate(manual){
+  UPD.last = Date.now();
+  if (manual) toast('Controllo aggiornamenti...');
+  fetch(RAW + 'version.json?t=' + Date.now(), { cache:'no-store' }).then(function(r){ if (!r.ok) throw 0; return r.json() }).then(function(j){
+    if (vcmp(j.version, APPV) > 0){
+      UPD.remote = j.version; UPD.native = (j.native||1) > NATIVE; render();
+      var seen = localStorage.getItem('bb-updseen') === j.version;
+      if (manual || (!seen && DB.set().autoupd !== false)) updWindow(j);
+    } else { UPD.remote = null; render(); if (manual) toast('Sei già all\'ultima versione') }
+  }).catch(function(){ if (manual) toast('Nessuna connessione, riprova più tardi') });
+}
+function updWindow(j){
+  try { localStorage.setItem('bb-updseen', j.version) } catch(e){}
+  buzz(30);
+  dialog({ title:'Nuova versione ' + j.version, img:true,
+    html:'<p>' + (UPD.native ? 'Questa versione richiede la nuova app: scarica e installa l\'APK aggiornata.' : 'Aggiornamento rapido, senza reinstallare l\'app.') + '</p>' + (j.notes ? '<p style="margin-top:8px;font-size:13px">' + esc(j.notes) + '</p>' : ''),
+    buttons:[{ t:'Dopo' }, { t: UPD.native ? 'Scarica' : 'Aggiorna', cls:'gold', fn:function(){ if (UPD.native) downloadApp(); else setTimeout(applyUpdate, 60) } }] });
+}
+function applyUpdate(){
+  toast('Scarico l\'aggiornamento...');
+  fetch(RAW + 'www/index.html?t=' + Date.now(), { cache:'no-store' }).then(function(r){ if (!r.ok) throw 0; return r.text() }).then(function(h){
+    var m = h.match(/var APPV = '([\d.]+)'/); if (!m || h.length < 5000) throw 0;
+    localStorage.setItem('bb-html', h); localStorage.setItem('bb-htmlv', m[1]);
+    toast('Aggiornata alla ' + m[1]); setTimeout(function(){ location.reload() }, 700);
+  }).catch(function(){ toast('Aggiornamento non riuscito, riprova') });
+}
+document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible' && Date.now() - UPD.last > 10*60*1000) checkUpdate(false) });
+
+// ---------- avvio ----------
+$('#menuBtn').innerHTML = ic('menu'); $('#prev').innerHTML = ic('left'); $('#next').innerHTML = ic('right');
+$('#hup').innerHTML = ic('up'); $('#hdn').innerHTML = ic('down'); $('#fab').innerHTML = ic('plus');
+document.querySelectorAll('nav button').forEach(function(b){ var k = b.dataset.sec; b.innerHTML = ic(k) + { mov:'Movimenti', mat:'Materiali', spe:'Spese', arc:'Archivio' }[k]; b.onclick = function(){ buzz(); openSection(k) } });
+$('#menuBtn').onclick = function(){ buzz(); openMenu() };
+$('#ver').onclick = function(){ checkUpdate(true) };
+$('#prev').onclick = function(){ shift(-1) }; $('#next').onclick = function(){ shift(1) };
+$('#ttl').onclick = function(){ S.cur = today(); render() };
+document.querySelectorAll('#seg button').forEach(function(b){ b.onclick = function(){ buzz(); setView(b.dataset.v) } });
+$('#hup').onclick = function(){ $('#hlist').scrollBy({ top:-75, behavior:'smooth' }) };
+$('#hdn').onclick = function(){ $('#hlist').scrollBy({ top:75, behavior:'smooth' }) };
+$('#fab').onclick = function(){ buzz(15); var top = STACK[STACK.length-1]; if (top && top._o && top._o.grow) back(); else openAdd() };
+(function(){ var c = $('#cal'), x0, y0;
+  c.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; y0 = e.touches[0].clientY }, { passive:true });
+  c.addEventListener('touchend', function(e){ if (x0 == null) return; var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)*1.5) shift(dx < 0 ? 1 : -1) }, { passive:true });
+})();
+// tasto indietro di Android
+(function(){ var C = window.Capacitor, A = C && C.Plugins && C.Plugins.App;
+  if (A && A.addListener) A.addListener('backButton', function(){ if (STACK.length) back(); else A.exitApp() });
+})();
+history.replaceState({ bb:0 }, '');
+render();
+if (!DB.set().user) setTimeout(function(){
+  dialog({ title:'Benvenuto in B&Better', img:true, html:'<p style="margin-bottom:12px">Come ti chiami?</p><input id="wn" maxlength="24" placeholder="Fabio">',
+    buttons:[{ t:'Inizia', cls:'gold', fn:function(d){ var v = $('#wn', d).value.trim(); if (!v){ $('#wn', d).style.borderColor = 'var(--red)'; return false } DB.set('user', v); render() } }] });
+  DLG.lock = 1;
+}, 400);
+setTimeout(function(){ checkUpdate(false) }, 2500);
+</script>
+</body>
+</html>

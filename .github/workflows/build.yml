@@ -1,0 +1,65 @@
+name: Compila APK
+
+on:
+  push:
+    branches: [main]
+    paths: ['version.json', 'package.json', 'capacitor.config.json', 'resources/**', '.github/workflows/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Versione
+        id: v
+        run: echo "ver=$(node -p "require('./version.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Progetto Android
+        run: |
+          npm install
+          npx cap add android
+          npx capacitor-assets generate --android --iconBackgroundColor '#071a3a' --splashBackgroundColor '#071a3a'
+          npx cap sync android
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"${{ steps.v.outputs.ver }}\"/" android/app/build.gradle
+
+      - name: Compila
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Firma
+        env:
+          KS: ${{ secrets.KEYSTORE_B64 }}
+          KP: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          if [ -z "$KS" ]; then
+            echo "::warning::Chiave di firma mancante: uso una chiave temporanea, gli aggiornamenti APK richiederanno di disinstallare l'app"
+            keytool -genkeypair -keystore ks.jks -alias bandbetter -keyalg RSA -keysize 2048 -validity 10000 -storepass tmppass -keypass tmppass -dname "CN=temp"
+            KP=tmppass
+          else
+            echo "$KS" | base64 -d > ks.jks
+          fi
+          $BT/zipalign -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
+          $BT/apksigner sign --ks ks.jks --ks-pass "pass:$KP" --key-pass "pass:$KP" --out BandBetter.apk aligned.apk
+          rm ks.jks
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.v.outputs.ver }}
+          name: B&Better ${{ steps.v.outputs.ver }}
+          files: BandBetter.apk
+          make_latest: true
