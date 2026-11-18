@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "native": 1,
-  "notes": "Nuovo aspetto chiaro: ingranaggio nell angolo, casette colorate, calendario arrotondato, barra in basso che segue il tasto +."
+  "notes": "Casette piene con contorno nero, arco dell ingranaggio più ampio."
 }

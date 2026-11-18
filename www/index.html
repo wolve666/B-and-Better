@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script>
-var APPV = '0.2.0', NATIVE = 1;
+var APPV = '0.2.1', NATIVE = 1;
 var RAW = 'https://raw.githubusercontent.com/wolve666/b-and-better/main/';
 var APK_URL = 'https://github.com/wolve666/b-and-better/releases/latest/download/BandBetter.apk';
 function vcmp(a, b){ a = String(a).split('.').map(Number); b = String(b).split('.').map(Number);
@@ -36,7 +36,7 @@ input[type=date]{color-scheme:light}
 svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 #app{position:absolute;inset:0;display:flex;flex-direction:column;padding-top:var(--safe-t)}
 header{height:var(--hdr);display:flex;align-items:center;gap:10px;padding:0 60px 0 14px;flex:none}
-#gearArc{position:absolute;right:0;top:var(--safe-t);width:47px;height:47px;pointer-events:none}
+#gearArc{position:absolute;right:0;top:var(--safe-t);width:54px;height:54px;pointer-events:none}
 #gear{position:absolute;right:6px;top:calc(var(--safe-t) + 6px);width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:var(--tx);z-index:5}
 #gear svg{width:28px;height:28px;fill:currentColor}
 header img{width:34px;height:34px;border-radius:9px}
@@ -79,10 +79,10 @@ header img{width:34px;height:34px;border-radius:9px}
 #hlist{flex:1;overflow-y:auto;scroll-snap-type:y mandatory;display:flex;flex-direction:column;gap:10px;padding:6px 0;scrollbar-width:none;width:100%;align-items:center}
 #hlist::-webkit-scrollbar{display:none}
 .hs{width:54px;display:flex;flex-direction:column;align-items:center;gap:1px;scroll-snap-align:start;flex:none;color:var(--tx);font-size:11px;font-weight:600;transition:transform .18s,opacity .18s;text-align:center;line-height:1.1;word-break:break-word}
-.hs svg.hh{width:34px;height:34px;fill:none;stroke-width:2.4;stroke-linejoin:round}
-.hs.sel{transform:scale(1.15)}.hs.sel svg.hh{stroke-width:3.2}
+.hs svg.hh{width:34px;height:34px;stroke:#111;stroke-width:1.8;stroke-linejoin:round}
+.hs.sel{transform:scale(1.15)}.hs.sel svg.hh{stroke-width:2.6}
 .hs.dim{opacity:.35}
-.hs.add{color:var(--tx3)}
+.hs.add{color:var(--tx3)}.hs.add svg.hh{fill:none;stroke:var(--tx3)}
 .arr{height:28px;width:44px;display:flex;align-items:center;justify-content:center;color:var(--tx)}
 .arr svg{width:16px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
 #fab{position:absolute;right:4px;bottom:calc(16px + var(--safe-b));width:var(--fab);height:var(--fab);border-radius:50%;background:var(--btn);color:var(--gold2);display:flex;align-items:center;justify-content:center;z-index:30;transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
@@ -157,7 +157,7 @@ nav svg.n{width:36px;height:36px;stroke:currentColor;stroke-width:2.2;stroke-lin
       <div class="user" id="user"></div>
     </div>
     </header>
-  <svg id="gearArc" viewBox="0 0 47 47" aria-hidden="true"><path d="M14.4 0 A24 24 0 1 0 47 32.6" fill="none" stroke="#0E2550" stroke-width="1.4"/></svg>
+  <svg id="gearArc" viewBox="0 0 54 54" aria-hidden="true"><path d="M14.5 0 A28 28 0 1 0 54 39.5" fill="none" stroke="#0E2550" stroke-width="1.4"/></svg>
   <button id="gear" aria-label="Impostazioni"></button>
   <div id="main">
     <div id="calw">
@@ -347,8 +347,8 @@ function shift(dir){
 }
 function renderHouses(){
   var l = $('#hlist'), hs = DB.houses();
-  l.innerHTML = hs.map(function(h){ return '<button class="hs' + (S.sel === h.id ? ' sel' : S.sel ? ' dim' : '') + '" data-h="' + h.id + '" style="stroke:' + h.color + '">' + HOUSE + '<span>' + esc(h.name) + '</span></button>' }).join('') +
-    '<button class="hs add" id="hadd" style="stroke:var(--tx3)">' + HOUSE.replace('</svg>', '<path d="M18 19v9M13.5 23.5h9" stroke-linecap="round"/></svg>') + '<span>Casa</span></button>';
+  l.innerHTML = hs.map(function(h){ return '<button class="hs' + (S.sel === h.id ? ' sel' : S.sel ? ' dim' : '') + '" data-h="' + h.id + '" style="fill:' + h.color + '">' + HOUSE + '<span>' + esc(h.name) + '</span></button>' }).join('') +
+    '<button class="hs add" id="hadd">' + HOUSE.replace('</svg>', '<path d="M18 19v9M13.5 23.5h9" stroke-linecap="round"/></svg>') + '<span>Casa</span></button>';
   l.querySelectorAll('[data-h]').forEach(function(e){ e.onclick = function(){
     var id = e.dataset.h; buzz();
     if (S.sel === id) openHouse(id); else { S.sel = id; render() }
