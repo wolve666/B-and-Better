@@ -34,6 +34,18 @@ jobs:
           npx cap add android
           npx capacitor-assets generate --android --iconBackgroundColor '#071a3a' --splashBackgroundColor '#071a3a'
           npx cap sync android
+          # barra di sistema Android: sfondo bianco e icone scure, sempre visibili
+          python3 - <<'PY'
+          p = 'android/app/src/main/res/values/styles.xml'; s = open(p).read()
+          items = ('<item name="android:navigationBarColor">#FFFFFF</item>'
+                   '<item name="android:windowLightNavigationBar">true</item>'
+                   '<item name="android:enforceNavigationBarContrast">false</item>'
+                   '<item name="android:windowBackground">@android:color/white</item>'
+                   '<item name="android:statusBarColor">#FFFFFF</item>'
+                   '<item name="android:windowLightStatusBar">true</item>')
+          k = s.index('name="AppTheme.NoActionBar"'); e = s.index('</style>', k)
+          s = s[:e] + items + s[e:]; open(p, 'w').write(s); print(s)
+          PY
           sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"${{ steps.v.outputs.ver }}\"/" android/app/build.gradle
 
       - name: Compila

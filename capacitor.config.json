@@ -2,5 +2,8 @@
   "appId": "it.educkgarage.bandbetter",
   "appName": "B&Better",
   "webDir": "www",
-  "android": { "backgroundColor": "#071a3a" }
+  "android": {
+    "backgroundColor": "#071a3a",
+    "adjustMarginsForEdgeToEdge": "force"
+  }
 }

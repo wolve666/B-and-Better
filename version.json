@@ -1,5 +1,5 @@
 {
-  "version": "0.2.6",
-  "native": 1,
-  "notes": "Casette: un tocco filtra, ritocco o tasto indietro tornano a tutte, pressione lunga apre la casa. Calendario a tutto schermo e notifiche rapide sotto il calendario, scegliendo cosa vedere in Impostazioni."
+  "version": "0.2.7",
+  "native": 2,
+  "notes": "Nuova APK: barra di sistema Android visibile, nuova icona, finestra del + staccata dai bordi e sopra la barra inferiore."
 }
