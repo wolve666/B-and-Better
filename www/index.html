@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script>
-var APPV = '0.2.5', NATIVE = 2;
+var APPV = '0.2.6', NATIVE = 2;
 var RAW = 'https://raw.githubusercontent.com/wolve666/b-and-better/main/';
 var APK_URL = 'https://github.com/wolve666/b-and-better/releases/latest/download/BandBetter.apk';
 function vcmp(a, b){ a = String(a).split('.').map(Number); b = String(b).split('.').map(Number);
@@ -55,13 +55,23 @@ header img{width:34px;height:34px;border-radius:9px}
 .seg button.on{background:var(--tx);color:#fff;font-weight:600}
 #flt{font-size:12px;color:var(--tx3);height:20px;display:flex;align-items:center;gap:6px}
 #flt .x{color:var(--gold)}
-#cal{flex:1;overflow-y:auto;padding-bottom:16px;touch-action:pan-y}
-.mg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+#cal{flex:1;overflow-y:auto;padding-bottom:8px;touch-action:pan-y;display:flex;flex-direction:column}
+#nq{flex:none;max-height:36%;overflow-y:auto;border-top:1px solid var(--line);padding:6px 0 10px;scrollbar-width:none}
+#nq:empty{display:none}#nq::-webkit-scrollbar{display:none}
+#nq .h{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin:2px 2px 4px}
+#nq .r{display:flex;align-items:center;gap:7px;width:100%;text-align:left;padding:6px 4px;border-radius:8px;font-size:12px;color:var(--tx2)}
+#nq .r:active{background:var(--line)}#nq .r b{color:var(--tx);font-weight:600}#nq .r .dot{width:9px;height:9px}
+#nq .r .w{flex:none;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--line);color:var(--tx2)}
+#nq .r .w.in{background:rgba(76,191,138,.18);color:var(--green)}#nq .r .w.out{background:rgba(229,96,79,.16);color:var(--red)}#nq .r .w.mo{background:var(--gold2);color:var(--tx)}
+#nq .r .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#nq .none{font-size:12px;color:var(--tx3);padding:4px}
+.mg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:auto;grid-auto-rows:minmax(75px,1fr);gap:2px;flex:1 0 auto;align-content:stretch}
 .mg .wd{font-size:11px;color:var(--tx3);text-align:center;padding-bottom:2px}
-.dc{min-height:75px;background:var(--card);border-radius:4px;padding:3px 0 3px;font-size:12px;color:var(--tx2);overflow:hidden;position:relative}
+#calw.nq .mg{grid-auto-rows:minmax(56px,1fr)}#calw.nq .dc{min-height:56px}
+.dc{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;text-align:left;min-height:75px;background:var(--card);border-radius:4px;padding:3px 0 3px;font-size:12px;color:var(--tx2);overflow:hidden;position:relative}
 .dc .n{padding-left:5px;display:block;height:16px}
 .dc.out{opacity:.35}.dc.today{background:var(--today);box-shadow:inset 0 0 0 1.5px var(--gold)}.dc.today .n{color:var(--tx);font-weight:700}
-.dc .bars{display:flex;flex-direction:column;gap:2px;margin-top:2px}
+.dc .bars{display:flex;flex-direction:column;gap:2px;position:absolute;top:21px;left:0;right:0}
+.dc .more{position:absolute;bottom:3px;left:0}
 .bar{height:7px}.bar.s{margin-left:45%;border-radius:4px 0 0 4px}.bar.e{margin-right:55%;border-radius:0 4px 4px 0}.bar.s.e{margin:0 30%;border-radius:4px}
 .more{font-size:10px;color:var(--tx3);padding-left:5px}
 .wk .row{display:flex;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line)}
@@ -132,6 +142,7 @@ nav svg.n{width:34px;height:34px}
 .ev .tt{flex:1;min-width:0}.ev .tt b{display:block}.ev .tt small{color:var(--tx2);font-size:12px}
 .kv{display:flex;justify-content:space-between;padding:11px 2px;border-bottom:1px solid var(--line);gap:12px}.kv span{color:var(--tx2)}.kv b{text-align:right;font-weight:600;user-select:text;-webkit-user-select:text}
 .stat{background:var(--bg2);border-radius:12px;padding:12px}.stat small{color:var(--tx2);font-size:12px}.stat b{display:block;font-size:22px;margin-top:2px}
+.sw.sub{margin-left:18px;width:calc(100% - 18px);padding:11px 12px}
 .sw{display:flex;align-items:center;justify-content:space-between;padding:14px 12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;width:100%;text-align:left}
 .tg{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;transition:background .2s}
 .tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s,background .2s}
@@ -166,6 +177,7 @@ nav svg.n{width:34px;height:34px}
       </div>
       <div id="flt"></div>
       <div id="cal"></div>
+      <div id="nq"></div>
     </div>
     <div id="hcol">
       <button class="arr" id="hup" aria-label="Su"></button>
@@ -281,6 +293,8 @@ var OLDCOL = ['#d9ae55','#4cc3a4','#ef8a68','#9b8cf0','#ec7fa6','#8fcc5a','#5aa9
 var COLORS = ['#2FA88F','#6BA83A','#E06B42','#7A6AD8','#D9578A','#D9A12E','#3A86D9','#E0892E','#D64545','#2BB0C2','#9AAE2E','#7D8597'];
 // i colori delle case create con il tema scuro passano alla nuova tavolozza
 DB.houses().forEach(function(h){ var k = OLDCOL.indexOf(h.color); if (k >= 0){ h.color = COLORS[k]; DB.saveHouse(h) } });
+var DEF = { vib:true, autoupd:true, nq:false, nq_in:true, nq_out:true, nq_pul:true, nq_sal:false, nq_tax:false, nqDays:2 };
+function opt(k){ var v = DB.set()[k]; return v === undefined ? DEF[k] : v }
 function hcol(id){ var h = DB.house(id); return h ? h.color : '#888' }
 function visBk(){ return DB.bookings().filter(function(b){ return !S.sel || b.house === S.sel }) }
 
@@ -291,26 +305,61 @@ function render(){
   $('#ver').classList.toggle('new', !!UPD.remote);
   document.querySelectorAll('#seg button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === S.view) });
   var h = S.sel && DB.house(S.sel);
-  $('#flt').innerHTML = h ? '<span class="dot" style="background:' + h.color + '"></span>Solo ' + esc(h.name) + ' <button class="x" id="fltx">· tutte le case</button>' : (DB.houses().length ? 'Tutte le case' : 'Aggiungi la prima casa dalla colonna a destra');
+  $('#flt').innerHTML = h ? '<span class="dot" style="background:' + h.color + '"></span>Solo ' + esc(h.name) + ' <button class="x" id="fltx">✕ tutte le case</button>' : (DB.houses().length ? 'Tutte le case' : 'Aggiungi la prima casa dalla colonna a destra');
   if ($('#fltx')) $('#fltx').onclick = function(){ S.sel = null; render() };
+  renderNq();
   ({ m:renderMonth, w:renderWeek, y:renderYear })[S.view]();
   renderHouses();
+}
+// ---------- notifiche rapide sotto il calendario ----------
+function renderNq(){
+  var el = $('#nq');
+  $('#calw').classList.toggle('nq', !!opt('nq'));
+  if (!opt('nq')){ el.innerHTML = ''; return }
+  var bk = visBk(), t = today(), days = opt('nqDays'), out = [];
+  for (var i = 0; i < days; i++){
+    var s = addD(t, i), lab = i === 0 ? 'Oggi' : i === 1 ? 'Domani' : fd(s, true);
+    bk.forEach(function(b){
+      var h = DB.house(b.house), hn = h ? h.name : '?';
+      if (b.ci === s){
+        if (opt('nq_in')) out.push([lab, b, 'in', 'ARRIVO', '<b>' + esc(b.guest) + '</b> · ' + esc(hn) + ' · ' + b.guests + ' osp.']);
+        var sal = (+b.price||0) - (+b.deposit||0);
+        if (opt('nq_sal') && sal > 0) out.push([lab, b, 'mo', 'SALDO', '<b>' + eur(sal) + '</b> da ' + esc(b.guest) + ' · ' + esc(hn)]);
+        var tx = taxFor(h, b.guests, nights(b.ci, b.co));
+        if (opt('nq_tax') && tx > 0) out.push([lab, b, 'mo', 'TASSA', '<b>' + eur(tx) + '</b> da ' + esc(b.guest) + ' · ' + esc(hn)]);
+      }
+      if (b.co === s){
+        if (opt('nq_out')) out.push([lab, b, 'out', 'PARTENZA', '<b>' + esc(b.guest) + '</b> · ' + esc(hn)]);
+        if (opt('nq_pul')){
+          var turn = DB.bookings().some(function(o){ return o.house === b.house && o.ci === s && o.id !== b.id });
+          out.push([lab, b, 'pu', 'PULIZIA', '<b>' + esc(hn) + '</b>' + (turn ? ' · cambio in giornata' : '')]);
+        }
+      }
+    });
+  }
+  el.innerHTML = '<div class="h">' + (days === 1 ? 'Oggi' : days === 2 ? 'Oggi e domani' : 'Prossimi ' + days + ' giorni') + '</div>' +
+    (out.length ? out.map(function(r){ return '<button class="r" data-b="' + r[1].id + '"><span class="dot" style="background:' + hcol(r[1].house) + '"></span><span class="w ' + r[2] + '">' + r[3] + '</span><span class="tx">' + (days > 1 ? r[0] + ' · ' : '') + r[4] + '</span></button>' }).join('')
+      : '<div class="none">Nessuna scadenza</div>');
+  bindEv(el);
 }
 function renderMonth(){
   var c = pd(S.cur), y = c.getFullYear(), m = c.getMonth();
   $('#ttl').textContent = MESI[m] + ' ' + y;
-  var first = new Date(y, m, 1), start = new Date(y, m, 1 - (first.getDay()+6)%7), bk = visBk(), t = today();
+  var cap = S.cap || 4, first = new Date(y, m, 1), start = new Date(y, m, 1 - (first.getDay()+6)%7), bk = visBk(), t = today();
   var h = '<div class="mg">' + GG.map(function(g){ return '<div class="wd">' + g + '</div>' }).join('');
   for (var i = 0; i < 42; i++){
     var d = new Date(start); d.setDate(start.getDate()+i); var s = iso(d);
     if (i === 35 && d.getMonth() !== m) break;
     var on = bk.filter(function(b){ return b.ci <= s && s <= b.co });
     h += '<button class="dc' + (d.getMonth() !== m ? ' out' : '') + (s === t ? ' today' : '') + '" data-d="' + s + '"><span class="n">' + d.getDate() + '</span><div class="bars">' +
-      on.slice(0,4).map(function(b){ return '<div class="bar' + (b.ci === s ? ' s' : '') + (b.co === s ? ' e' : '') + '" style="background:' + hcol(b.house) + '"></div>' }).join('') +
-      '</div>' + (on.length > 4 ? '<div class="more">+' + (on.length-4) + '</div>' : '') + '</button>';
+      on.slice(0, on.length > cap ? cap - 1 : cap).map(function(b){ return '<div class="bar' + (b.ci === s ? ' s' : '') + (b.co === s ? ' e' : '') + '" style="background:' + hcol(b.house) + '"></div>' }).join('') +
+      '</div>' + (on.length > cap ? '<div class="more">+' + (on.length-cap+1) + '</div>' : '') + '</button>';
   }
   $('#cal').innerHTML = h + '</div>';
   $('#cal').querySelectorAll('.dc').forEach(function(e){ e.onclick = function(){ openDay(e.dataset.d) } });
+  // quante barre stanno nella casella: il calendario si allunga e ne mostra di piu'
+  var dc = $('#cal .dc'), nc = dc ? Math.max(2, Math.floor((dc.offsetHeight - 37) / 9) + 1) : cap;
+  if (nc !== cap && !renderMonth._again){ S.cap = nc; renderMonth._again = 1; renderMonth(); renderMonth._again = 0 }
 }
 function weekStart(s){ var d = pd(s); d.setDate(d.getDate() - (d.getDay()+6)%7); return iso(d) }
 function renderWeek(){
@@ -349,10 +398,16 @@ function renderHouses(){
   var l = $('#hlist'), hs = DB.houses();
   l.innerHTML = hs.map(function(h){ return '<button class="hs' + (S.sel === h.id ? ' sel' : S.sel ? ' dim' : '') + '" data-h="' + h.id + '" style="fill:' + h.color + '">' + HOUSE + '<span>' + esc(h.name) + '</span></button>' }).join('') +
     '<button class="hs add" id="hadd">' + HOUSE.replace('</svg>', '<path d="M18 19v9M13.5 23.5h9" stroke-linecap="round"/></svg>') + '<span>Casa</span></button>';
-  l.querySelectorAll('[data-h]').forEach(function(e){ e.onclick = function(){
-    var id = e.dataset.h; buzz();
-    if (S.sel === id) openHouse(id); else { S.sel = id; render() }
-  } });
+  l.querySelectorAll('[data-h]').forEach(function(e){
+    var tm, x0, y0, long = 0, id = e.dataset.h;
+    function stop(){ clearTimeout(tm); tm = null }
+    e.addEventListener('pointerdown', function(ev){ long = 0; x0 = ev.clientX; y0 = ev.clientY; stop(); tm = setTimeout(function(){ long = 1; tm = null; buzz(30); openHouse(id) }, 480) });
+    e.addEventListener('pointermove', function(ev){ if (tm && (Math.abs(ev.clientX - x0) > 10 || Math.abs(ev.clientY - y0) > 10)) stop() });
+    e.addEventListener('pointerup', stop); e.addEventListener('pointercancel', stop); e.addEventListener('pointerleave', stop);
+    e.oncontextmenu = function(ev){ ev.preventDefault() };
+    // un tocco filtra; un tocco sulla casa gia' selezionata torna a tutte le case; pressione lunga apre la casa
+    e.onclick = function(){ if (long){ long = 0; return } buzz(); S.sel = S.sel === id ? null : id; render() };
+  });
   $('#hadd').onclick = function(){ openHouseEdit() };
 }
 
@@ -572,15 +627,21 @@ function openProfile(){
 function openSettings(){
   openPage({ title:'Impostazioni', build:function(el){
     var st = DB.set();
-    el.innerHTML = sw('vib', 'Vibrazione al tocco', st.vib !== false) + sw('autoupd', 'Avviso automatico aggiornamenti', st.autoupd !== false) +
+    var on = opt('nq'), nd = opt('nqDays');
+    el.innerHTML = sw('vib', 'Vibrazione al tocco', opt('vib')) + sw('autoupd', 'Avviso automatico aggiornamenti', opt('autoupd')) +
       '<div class="free" style="margin-top:6px">La vista del calendario (anno, mese, settimana) resta quella che hai usato per ultima.</div>' +
+      '<div class="sec">Notifiche rapide nella finestra principale</div>' + sw('nq', 'Mostra sotto il calendario', on) +
+      (on ? [['nq_in','Arrivi (check-in)'],['nq_out','Partenze (check-out)'],['nq_pul','Pulizie dopo le partenze'],['nq_sal','Saldi da incassare all\'arrivo'],['nq_tax','Tassa di soggiorno da riscuotere']].map(function(x){ return sw(x[0], x[1], opt(x[0]), 1) }).join('') +
+        '<div class="sw sub"><span>Giorni</span><div class="seg" id="nqd">' + [[1,'Oggi'],[2,'+1'],[3,'3'],[7,'7']].map(function(x){ return '<button data-n="' + x[0] + '"' + (x[0] === nd ? ' class="on"' : '') + '>' + x[1] + '</button>' }).join('') + '</div></div>'
+      : '<div class="free">Se spente, il calendario si allunga e occupa tutto lo spazio.</div>') +
       '<div class="sec">Prove</div><button class="btn" id="demo">' + ic('home') + 'Carica dati di prova</button><button class="btn red" id="wipe">' + ic('trash') + 'Cancella tutti i dati</button>';
     $('#demo', el).onclick = function(){ confirmDo('Caricare i dati di prova?', '10 case con prenotazioni da due mesi fa a tre mesi avanti. I dati attuali verranno sostituiti.', 'Carica', function(){ DB.restore(JSON.stringify(demoData())); S.sel = null; S.cur = today(); toast('Dati di prova caricati'); refreshAll(); setTimeout(function(){ if (STACK.length) back(STACK.length) }, 350) }) };
     $('#wipe', el).onclick = function(){ confirmDo('Cancellare tutti i dati?', 'Case e prenotazioni verranno eliminate. Non si può annullare.', 'Cancella', function(){ DB.restore(JSON.stringify({ houses:[], bookings:[], settings:DB.set() })); S.sel = null; toast('Dati cancellati'); refreshAll() }) };
-    el.querySelectorAll('.sw').forEach(function(e){ e.onclick = function(){ var k = e.dataset.k, v = !(DB.set()[k] !== false); DB.set(k, v); $('.tg', e).classList.toggle('on', v); buzz() } });
+    el.querySelectorAll('.sw[data-k]').forEach(function(e){ e.onclick = function(){ var k = e.dataset.k, v = !opt(k); DB.set(k, v); $('.tg', e).classList.toggle('on', v); buzz(); if (k.slice(0,2) === 'nq') refreshAll() } });
+    el.querySelectorAll('#nqd button').forEach(function(b){ b.onclick = function(){ buzz(); DB.set('nqDays', +b.dataset.n); refreshAll() } });
   } });
 }
-function sw(k, t, on){ return '<button class="sw" data-k="' + k + '"><span>' + t + '</span><span class="tg' + (on ? ' on' : '') + '"></span></button>' }
+function sw(k, t, on, sub){ return '<button class="sw' + (sub ? ' sub' : '') + '" data-k="' + k + '"><span>' + t + '</span><span class="tg' + (on ? ' on' : '') + '"></span></button>' }
 function openBackup(){
   openPage({ title:'Backup dati', build:function(el){
     el.innerHTML = '<div class="free">Il backup copia tutte le case e le prenotazioni come testo. Incollalo in un messaggio o in una nota per conservarlo.</div><button class="btn gold" id="bc">' + ic('cloud') + 'Copia backup</button>' +
@@ -657,7 +718,7 @@ document.addEventListener('visibilitychange', function(){ if (document.visibilit
 // ---------- avvio ----------
 $('#gear').innerHTML = '<svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10.2 2h3.6l.6 2.6 1.9 1.1 2.5-.9 1.8 3.1-2 1.8v2.6l2 1.8-1.8 3.1-2.5-.9-1.9 1.1-.6 2.6h-3.6l-.6-2.6-1.9-1.1-2.5.9-1.8-3.1 2-1.8v-2.6l-2-1.8 1.8-3.1 2.5.9 1.9-1.1zM12 8.6a3.4 3.4 0 100 6.8 3.4 3.4 0 000-6.8z"/></svg>'; $('#prev').innerHTML = ic('left'); $('#next').innerHTML = ic('right');
 $('#hup').innerHTML = '<svg viewBox="0 0 16 12"><path d="M8 1 L15 11 H1 Z"/></svg>'; $('#hdn').innerHTML = '<svg viewBox="0 0 16 12"><path d="M8 11 L15 1 H1 Z"/></svg>'; $('#fab').innerHTML = ic('plus');
-drawBar(); window.addEventListener('resize', drawBar);
+drawBar(); window.addEventListener('resize', function(){ drawBar(); render() });
 document.querySelectorAll('nav button').forEach(function(b){ var k = b.dataset.sec; b.innerHTML = '<svg class="n" viewBox="0 0 32 32">' + NAVI[k] + '</svg>'; b.setAttribute('aria-label', { mov:'Movimenti', mat:'Materiali', spe:'Spese', arc:'Archivio' }[k]); b.onclick = function(){ buzz(); openSection(k) } });
 $('#gear').onclick = function(){ buzz(); openMenu() };
 $('#ver').onclick = function(){ checkUpdate(true) };
@@ -673,7 +734,7 @@ $('#fab').onclick = function(){ buzz(15); var top = STACK[STACK.length-1]; if (t
 })();
 // tasto indietro di Android
 (function(){ var C = window.Capacitor, A = C && C.Plugins && C.Plugins.App;
-  if (A && A.addListener) A.addListener('backButton', function(){ if (STACK.length) back(); else A.exitApp() });
+  if (A && A.addListener) A.addListener('backButton', function(){ if (STACK.length) back(); else if (S.sel){ S.sel = null; render() } else A.exitApp() });
 })();
 history.replaceState({ bb:0 }, '');
 render();
