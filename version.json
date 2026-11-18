@@ -1,5 +1,5 @@
 {
-  "version": "0.2.4",
-  "native": 1,
-  "notes": "Icona Materiali: torna lo scatolone in prospettiva con la chiusura sopra."
+  "version": "0.2.5",
+  "native": 2,
+  "notes": "Nuova icona dell'app: più grande, senza cornice, adattata alle forme standard Android. Richiede di installare l'APK."
 }
