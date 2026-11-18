@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script>
-var APPV = '0.1.0', NATIVE = 1;
+var APPV = '0.1.1', NATIVE = 1;
 var RAW = 'https://raw.githubusercontent.com/wolve666/b-and-better/main/';
 var APK_URL = 'https://github.com/wolve666/b-and-better/releases/latest/download/BandBetter.apk';
 function vcmp(a, b){ a = String(a).split('.').map(Number); b = String(b).split('.').map(Number);
@@ -338,7 +338,7 @@ function closeTop(){
   if (p._o.grow) $('#fab').classList.remove('open');
   if (p._o.onclose) p._o.onclose();
 }
-window.addEventListener('popstate', function(){ closeTop() });
+window.addEventListener('popstate', function(e){ var n = e.state && e.state.bb != null ? e.state.bb : STACK.length - 1; do { closeTop() } while (STACK.length > Math.max(0, n)) });
 function back(n){ history.go(-(n||1)) }
 function refreshAll(){ render(); STACK.forEach(function(p){ if (p.render) p.render() }) }
 
@@ -534,7 +534,10 @@ function openSettings(){
   openPage({ title:'Impostazioni', build:function(el){
     var st = DB.set();
     el.innerHTML = sw('vib', 'Vibrazione al tocco', st.vib !== false) + sw('autoupd', 'Avviso automatico aggiornamenti', st.autoupd !== false) +
-      '<div class="free" style="margin-top:6px">La vista del calendario (anno, mese, settimana) resta quella che hai usato per ultima.</div>';
+      '<div class="free" style="margin-top:6px">La vista del calendario (anno, mese, settimana) resta quella che hai usato per ultima.</div>' +
+      '<div class="sec">Prove</div><button class="btn" id="demo">' + ic('home') + 'Carica dati di prova</button><button class="btn red" id="wipe">' + ic('trash') + 'Cancella tutti i dati</button>';
+    $('#demo', el).onclick = function(){ confirmDo('Caricare i dati di prova?', '10 case con prenotazioni da due mesi fa a tre mesi avanti. I dati attuali verranno sostituiti.', 'Carica', function(){ DB.restore(JSON.stringify(demoData())); S.sel = null; S.cur = today(); toast('Dati di prova caricati'); refreshAll(); setTimeout(function(){ if (STACK.length) back(STACK.length) }, 350) }) };
+    $('#wipe', el).onclick = function(){ confirmDo('Cancellare tutti i dati?', 'Case e prenotazioni verranno eliminate. Non si può annullare.', 'Cancella', function(){ DB.restore(JSON.stringify({ houses:[], bookings:[], settings:DB.set() })); S.sel = null; toast('Dati cancellati'); refreshAll() }) };
     el.querySelectorAll('.sw').forEach(function(e){ e.onclick = function(){ var k = e.dataset.k, v = !(DB.set()[k] !== false); DB.set(k, v); $('.tg', e).classList.toggle('on', v); buzz() } });
   } });
 }
@@ -561,6 +564,26 @@ function openInfo(){
   } });
 }
 function downloadApp(){ window.open(APK_URL, '_blank') }
+
+// ---------- dati di prova ----------
+function demoData(){
+  var seed = 7; function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646 } function pick(a){ return a[Math.floor(rnd()*a.length)] }
+  var H = [['Casa al Mare','Lungomare Colombo 12'],['La Pineta','Via dei Pini 4'],['Loft Centro','Corso Vittorio 88'],['Il Borgo','Vicolo del Pozzo 3'],['Villa Collina','Strada Panoramica 21'],['Mansarda Blu','Via Garibaldi 45'],['Casa Limoni','Via degli Agrumi 9'],['Il Faro','Piazza del Porto 2'],['Suite Duomo','Via del Duomo 17'],['Rustico','Località Le Vigne']];
+  var N = ['Mario Rossi','Anna Bianchi','Luca Verdi','Giulia Romano','Marco Colombo','Sara Ricci','Paolo Marino','Elena Greco','Davide Bruno','Chiara Gallo','Hans Müller','Sophie Martin','John Smith','Laura Conti','Andrea De Luca','Francesca Costa','Pierre Dubois','Emma Wilson','Matteo Fontana','Valentina Rizzo','Klaus Weber','Lucia Moretti','Simone Barbieri','Ana García'];
+  var NOTE = ['Arrivo in tarda serata','Chiedono culla per neonato','Hanno un cane di piccola taglia','Anniversario: lasciare una bottiglia di vino','Arrivo con il treno delle 15','Pagamento saldo in contanti','Richiesta colazione senza glutine','Check-out anticipato alle 8','','','',''];
+  var houses = H.map(function(h, i){ return { id:'demo' + i, name:h[0], addr:h[1], color:COLORS[i % COLORS.length], tax: [0,1.5,2,2.5,3][i % 5], taxMax: i % 3 ? 7 : 0 } });
+  var bookings = [], start = addD(today(), -60), end = addD(today(), 90), k = 0;
+  houses.forEach(function(h, i){
+    var d = addD(start, Math.floor(rnd()*6));
+    while (d < end){
+      var n = pick([1,2,2,3,3,3,4,5,7,7,10]), g = pick([1,2,2,2,3,4,4,5]), per = 45 + Math.floor(rnd()*70) + g*10, price = per * n;
+      var co = addD(d, n);
+      bookings.push({ id:'dbk' + (k++), house:h.id, guest:pick(N), phone:'+39 3' + Math.floor(10 + rnd()*89) + ' ' + Math.floor(1000000 + rnd()*8999999), ci:d, co:co, guests:g, price:price, deposit: rnd() < .7 ? Math.round(price*.3) : 0, notes:pick(NOTE), tax:taxFor(h, g, n), created:Date.now() });
+      d = addD(co, Math.floor(rnd()*rnd()*9));
+    }
+  });
+  return { houses:houses, bookings:bookings, settings:DB.set(), rev:0 };
+}
 
 // ---------- aggiornamenti ----------
 var UPD = { remote:null, native:false, last:0 };

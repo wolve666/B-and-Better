@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "native": 1,
-  "notes": "Prima versione: calendario prenotazioni, case, check-in e out, movimenti, conteggi, archivio."
+  "notes": "Nelle Impostazioni: carica dati di prova (10 case con prenotazioni) e cancella tutti i dati."
 }
